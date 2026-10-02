@@ -1,0 +1,133 @@
+class Node:
+    def __init__(self, adm_no, name):
+        self.adm_no = adm_no      # key (BST ordered by admission number)
+        self.name = name
+        self.left = None
+        self.right = None
+
+
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, node, adm_no, name):
+        if node is None:
+            return Node(adm_no, name)
+
+        if adm_no < node.adm_no:
+            node.left = self.insert(node.left, adm_no, name)
+        elif adm_no > node.adm_no:
+            node.right = self.insert(node.right, adm_no, name)
+        else:
+            print("Admission No already exists")
+        return node
+
+    def search(self, node, adm_no):
+        if node is None:
+            return None
+        if adm_no == node.adm_no:
+            return node
+        if adm_no < node.adm_no:
+            return self.search(node.left, adm_no)
+        return self.search(node.right, adm_no)
+
+    def min_node(self, node):
+        while node.left is not None:
+            node = node.left
+        return node
+
+    def delete(self, node, adm_no):
+        if node is None:
+            print("Record Not Found")
+            return None
+
+        if adm_no < node.adm_no:
+            node.left = self.delete(node.left, adm_no)
+        elif adm_no > node.adm_no:
+            node.right = self.delete(node.right, adm_no)
+        else:
+            # Case 1 and 2: zero or one child
+            if node.left is None:
+                return node.right
+            if node.right is None:
+                return node.left
+            # Case 3: two children -> replace with inorder successor
+            succ = self.min_node(node.right)
+            node.adm_no = succ.adm_no
+            node.name = succ.name
+            node.right = self.delete(node.right, succ.adm_no)
+        return node
+
+    def inorder(self, node):
+        if node:
+            self.inorder(node.left)
+            print(node.adm_no, node.name)
+            self.inorder(node.right)
+
+    def preorder(self, node):
+        if node:
+            print(node.adm_no, node.name)
+            self.preorder(node.left)
+            self.preorder(node.right)
+
+    def postorder(self, node):
+        if node:
+            self.postorder(node.left)
+            self.postorder(node.right)
+            print(node.adm_no, node.name)
+
+
+t = BST()
+
+while True:
+    print("\n--- Student Admission Records ---")
+    print("1. Insert Record")
+    print("2. Search Record")
+    print("3. Delete Record")
+    print("4. Display (Inorder - Sorted)")
+    print("5. Preorder")
+    print("6. Postorder")
+    print("7. Exit")
+
+    ch = int(input("Enter Choice: "))
+
+    if ch == 1:
+        adm_no = int(input("Enter Admission No: "))
+        name = input("Enter Student Name: ")
+        t.root = t.insert(t.root, adm_no, name)
+
+    elif ch == 2:
+        adm_no = int(input("Enter Admission No: "))
+        r = t.search(t.root, adm_no)
+        if r:
+            print("Found:", r.adm_no, r.name)
+        else:
+            print("Record Not Found")
+
+    elif ch == 3:
+        adm_no = int(input("Enter Admission No: "))
+        t.root = t.delete(t.root, adm_no)
+
+    elif ch == 4:
+        if t.root is None:
+            print("No Records")
+        else:
+            t.inorder(t.root)
+
+    elif ch == 5:
+        if t.root is None:
+            print("No Records")
+        else:
+            t.preorder(t.root)
+
+    elif ch == 6:
+        if t.root is None:
+            print("No Records")
+        else:
+            t.postorder(t.root)
+
+    elif ch == 7:
+        break
+
+    else:
+        print("Invalid Choice")
